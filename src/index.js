@@ -37,7 +37,7 @@ class FetchDemo extends React.Component {
     url: 'http://localhost:8000/api/test',
     data: {
       'company':'McDonalds',
-      'state':'CA'
+      'state':'CA',
       'amount' : 20
     },
     headers: {
