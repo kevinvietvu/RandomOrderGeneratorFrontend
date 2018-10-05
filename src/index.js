@@ -30,6 +30,7 @@ class FetchDemo extends React.Component {
 
   // Fetch server data in the componentDidMount lifecycle method, method executed only once
     componentDidMount() {
+      document.title = "Random Order Generator";
       axios.get("http://localhost:8000/api/")
         .then(res => {
   		/*
@@ -62,18 +63,21 @@ class FetchDemo extends React.Component {
       return Object.keys(menu).map(menuType => {
         var menuItems = menu[menuType]
         var menuTypeToggle = menuTypes[menuType]
+        var loadImages = false;
+        var menuTypeImage = ""
+        menuTypeImage=menuType.replace(/\s+/g,"+");
+        const imgLink = "https://s3-us-west-1.amazonaws.com/elasticbeanstalk-us-west-1-699070318617/" + this.state.company + "/" + menuTypeImage + ".jpg"
         //https://stackoverflow.com/questions/46520847/using-map-to-access-nested-json-in-react-native
         return (
-          <div key={menuType}>
-            <button onClick={() => this.toggleMenuItems( menuType )}>
-                {menuType}
+          <li key={menuType} className="menutype">
+            <button class="largebtn btn-block" onClick={() => this.toggleMenuItems( menuType )}>
+              {loadImages ? <img src={imgLink} alt="https://s3-us-west-1.amazonaws.com/elasticbeanstalk-us-west-1-699070318617/Loading+Spinner.gif" height="50" width="50"/> : ""}
+              {menuType}
             </button>
-
-            <ul>
+            <ul class="ulborder">
                 {menuTypeToggle ? this.displayMenuItemsOnToggle(menuItems) : ""}
             </ul>
-          </div>
-
+          </li>
         );
       });
     }
@@ -84,8 +88,11 @@ class FetchDemo extends React.Component {
         const item = menuItems[key]
         const itemName = item['name']
         const itemPrice = item['price']
+
         return (
-          <li key={itemName}> {itemName} : ${itemPrice} </li>
+          <li key={itemName}>
+            {itemName} : ${itemPrice}
+          </li>
         );
       });
     }
@@ -116,7 +123,7 @@ class FetchDemo extends React.Component {
     else {
       axios({
         method: 'post',
-        url: 'http://localhost:8000/api/test',
+        url: 'http://localhost:8000/api/randomOrder',
         data: {
           'company':'McDonalds',
           'state':'CA',
@@ -145,8 +152,8 @@ class FetchDemo extends React.Component {
   }
 
   handleChange(event) {
-    // pattern="[0-9]+([\.][0-9]+)?" regex for decimal numbers, if I ever want to implement another text input for change
-    if (event.target.value === "" || (!isNaN(event.target.value) && parseInt(event.target.value) <= 1000))
+    //pattern="[0-9]+([\.][0-9]+)?" regex for decimal numbers, if I ever want to implement another text input for change
+    if (event.target.value === "" || (!isNaN(event.target.value) && parseInt(event.target.value,10) <= 1000))
       this.setState({amount: event.target.value});
     else
       alert("Input must be a number and under $1000")
@@ -154,23 +161,41 @@ class FetchDemo extends React.Component {
 
   render() {
     const header = this.state.company + ", " + this.state.stateName
-
     return (
-      <div>
-        <h1>{header}</h1>
-        <div>
-          <ul> {this.displayMenuTypes()} </ul>
-           <label>
-             $ You Want To Spend
-             <input type="text"  value={this.state.amount} onChange={this.handleChange}/>
-           </label>
-          <button onClick={() => this.getRandomOrder(parseFloat(this.state.amount)) }>
-            Generate Random Order
-          </button>
-          {this.displayRandomOrder()}
-        </div>
-      </div>
+      <html lang="en">
+        <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"/>
+        </head>
+        <body>
+          <ul id="navbar">
+            <p> Random Order Generator </p>
+          </ul>
+          <div class="container-fluid">
+            <div class="container">
+              <h1> <p> {header} </p> </h1>
+              <ul>
+                {this.displayMenuTypes()}
+              </ul>
+              <label>
+                <p>Money you want to spend</p>
+                <input type="text"  value={this.state.amount} onChange={this.handleChange}/>
+              </label>
+              <button class="btn shadowbtn" onClick={() => this.getRandomOrder(parseFloat(this.state.amount)) }>
+                Generate Random Order
+              </button>
+              <ul class="ulborder"> {this.displayRandomOrder()} </ul>
+            </div>
+          </div>
 
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <p>Background Image via www.mcdonalds.com/us/en-us.html </p>
+
+        </body>
+      </html>
     );
   }
 }
