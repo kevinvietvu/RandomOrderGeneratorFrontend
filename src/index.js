@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 //import App from './App';
-//import registerServiceWorker from './registerServiceWorker';
 import axios from 'axios';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -12,7 +11,7 @@ build complex UIs from small and isolated pieces of code called components (Reac
 A component takes in parameters, called props (short for “properties”), and returns a hierarchy
 of views to display via the render method.
 */
-class FetchDemo extends React.Component {
+class RandomOrderGenerator extends React.Component {
   constructor(props) {
       super(props)
       this.state = {
@@ -31,7 +30,16 @@ class FetchDemo extends React.Component {
   // Fetch server data in the componentDidMount lifecycle method, method executed only once
     componentDidMount() {
       document.title = "Random Order Generator";
-      axios.get("http://localhost:8000/api/")
+      var apiURL = ""
+      if (this.props.devFlag === "true") {
+        console.log("dev")
+        apiURL = "http://localhost:8000/api/"
+      }
+      else {
+        console.log("prod")
+        apiURL = "http://django-env.e5uvs6mjph.us-west-1.elasticbeanstalk.com/api/"
+      }
+      axios.get(apiURL)
         .then(res => {
   		/*
   		  Set initial state with server data
@@ -70,11 +78,11 @@ class FetchDemo extends React.Component {
         //https://stackoverflow.com/questions/46520847/using-map-to-access-nested-json-in-react-native
         return (
           <li key={menuType} className="menutype">
-            <button class="largebtn btn-block" onClick={() => this.toggleMenuItems( menuType )}>
+            <button className="largebtn btn-block" onClick={() => this.toggleMenuItems( menuType )}>
               {loadImages ? <img src={imgLink} alt="https://s3-us-west-1.amazonaws.com/elasticbeanstalk-us-west-1-699070318617/Loading+Spinner.gif" height="50" width="50"/> : ""}
               {menuType}
             </button>
-            <ul class="ulborder">
+            <ul className="ulborder">
                 {menuTypeToggle ? this.displayMenuItemsOnToggle(menuItems) : ""}
             </ul>
           </li>
@@ -121,9 +129,18 @@ class FetchDemo extends React.Component {
       alert("Enter a value before generating a random order")
     }
     else {
+      var apiURL = ""
+      if (this.props.devFlag === "true") {
+        console.log("dev")
+        apiURL = "http://localhost:8000/api/randomOrder"
+      }
+      else {
+        console.log("prod")
+        apiURL = "http://django-env.e5uvs6mjph.us-west-1.elasticbeanstalk.com/api/randomOrder"
+      }
       axios({
         method: 'post',
-        url: 'http://localhost:8000/api/randomOrder',
+        url: apiURL,
         data: {
           'company':'McDonalds',
           'state':'CA',
@@ -164,16 +181,16 @@ class FetchDemo extends React.Component {
     return (
       <html lang="en">
         <head>
-        <meta charset="utf-8"/>
+        <meta charSet="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossOrigin="anonymous"/>
         </head>
         <body>
           <ul id="navbar">
             <p> Random Order Generator </p>
           </ul>
-          <div class="container-fluid">
-            <div class="container">
+          <div className="container-fluid">
+            <div className="container">
               <h1> <p> {header} </p> </h1>
               <ul>
                 {this.displayMenuTypes()}
@@ -182,16 +199,16 @@ class FetchDemo extends React.Component {
                 <p>Money you want to spend</p>
                 <input type="text"  value={this.state.amount} onChange={this.handleChange}/>
               </label>
-              <button class="btn shadowbtn" onClick={() => this.getRandomOrder(parseFloat(this.state.amount)) }>
+              <button className="btn shadowbtn" onClick={() => this.getRandomOrder(parseFloat(this.state.amount)) }>
                 Generate Random Order
               </button>
-              <ul class="ulborder"> {this.displayRandomOrder()} </ul>
+              <ul className="ulborder"> {this.displayRandomOrder()} </ul>
             </div>
           </div>
 
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossOrigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossOrigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossOrigin="anonymous"></script>
         <p>Background Image via www.mcdonalds.com/us/en-us.html </p>
 
         </body>
@@ -202,6 +219,6 @@ class FetchDemo extends React.Component {
 
 
 ReactDOM.render(
-  <FetchDemo testApi="reactjs app"/>,
+  <RandomOrderGenerator devFlag="false"/>,
   document.getElementById('root')
 );
