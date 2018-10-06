@@ -80,3 +80,19 @@ ul {
 .shadowbtn:hover {
     box-shadow: 0 4px 4px 0 rgba(0,0,0,0.24), 0 4px 4px 0 rgba(0,0,0,0.19);
 }
+
+.source {
+  bottom:0px;
+  position: fixed;
+  font-size:10px;
+}
+
+.loadingMenu {
+  text-align: center;
+  display: block;
+  margin: auto;
+}
+
+.loadingText {
+  font-size: 40px;
+}

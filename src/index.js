@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-//import App from './App';
+import loading from './Loading_Spinner.gif'
+import background from './background_image.jpg'
 import axios from 'axios';
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -21,8 +22,8 @@ class RandomOrderGenerator extends React.Component {
         menu: {},
         menuTypes : {},
         randomOrders : {},
+        loadingMenu : true,
       };
-
 
     this.handleChange = this.handleChange.bind(this);
   }
@@ -41,9 +42,7 @@ class RandomOrderGenerator extends React.Component {
       }
       axios.get(apiURL)
         .then(res => {
-  		/*
-  		  Set initial state with server data
-  		*/
+  		/* Set initial state with server data */
           const menuData = res.data
           this.setState({ menu: menuData },
               ()=>{console.log()}
@@ -59,6 +58,8 @@ class RandomOrderGenerator extends React.Component {
           this.setState( { menuTypes : types  },
               ()=>{console.log()}
           );
+
+          this.setState( { loadingMenu : false } )
 
         }).catch(function(error) {
           console.log(error);
@@ -160,6 +161,16 @@ class RandomOrderGenerator extends React.Component {
     }
   }
 
+  loadingScreen() {
+    return (
+      <div className="loadingMenu">
+      <p className="loadingText"> Loading Menu </p>
+      <p>Sorry for the long wait time, heroku app is currently in the process of waking up. </p>
+      <img src={loading} alt="https://s3-us-west-1.amazonaws.com/elasticbeanstalk-us-west-1-699070318617/Loading+Spinner.gif" height="250" width="250"/>
+      </div>
+    );
+  }
+
   //https://stackoverflow.com/questions/42761378/react-create-a-new-html-element-on-click
   toggleMenuItems(menuTypeGiven) {
     var types = this.state.menuTypes
@@ -178,6 +189,7 @@ class RandomOrderGenerator extends React.Component {
 
   render() {
     const header = this.state.company + ", " + this.state.stateName
+
     return (
       <html lang="en">
         <head>
@@ -190,10 +202,12 @@ class RandomOrderGenerator extends React.Component {
             <p> Random Order Generator </p>
           </ul>
           <div className="container-fluid">
+          { this.state.loadingMenu ? this.loadingScreen() :
             <div className="container">
               <h1> <p> {header} </p> </h1>
+              <p> Currently in the process of adding more fast food restaurants </p>
               <ul>
-                {this.displayMenuTypes()}
+                { this.displayMenuTypes() }
               </ul>
               <label>
                 <p>Money you want to spend</p>
@@ -204,13 +218,12 @@ class RandomOrderGenerator extends React.Component {
               </button>
               <ul className="ulborder"> {this.displayRandomOrder()} </ul>
             </div>
+          }
           </div>
-
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossOrigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossOrigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossOrigin="anonymous"></script>
-        <p>Background Image via www.mcdonalds.com/us/en-us.html </p>
-
+        <p className="source">Background Image via www.mcdonalds.com/us/en-us.html </p>
         </body>
       </html>
     );
