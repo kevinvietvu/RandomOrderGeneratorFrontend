@@ -37,7 +37,7 @@ class RandomOrderGenerator extends React.Component {
       }
       else {
         console.log("prod")
-        apiURL = "http://django-env.e5uvs6mjph.us-west-1.elasticbeanstalk.com/api/"
+        apiURL = "https://randomordergeneratorbackend.herokuapp.com/api/"
       }
       axios.get(apiURL)
         .then(res => {
@@ -136,7 +136,7 @@ class RandomOrderGenerator extends React.Component {
       }
       else {
         console.log("prod")
-        apiURL = "http://django-env.e5uvs6mjph.us-west-1.elasticbeanstalk.com/api/randomOrder"
+        apiURL = "https://randomordergeneratorbackend.herokuapp.com/api/randomOrder"
       }
       axios({
         method: 'post',
@@ -219,6 +219,6 @@ class RandomOrderGenerator extends React.Component {
 
 
 ReactDOM.render(
-  <RandomOrderGenerator devFlag="false"/>,
+  <RandomOrderGenerator devFlag="true"/>,
   document.getElementById('root')
 );
