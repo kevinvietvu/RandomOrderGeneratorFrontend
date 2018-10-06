@@ -219,6 +219,6 @@ class RandomOrderGenerator extends React.Component {
 
 
 ReactDOM.render(
-  <RandomOrderGenerator devFlag="true"/>,
+  <RandomOrderGenerator devFlag="false"/>,
   document.getElementById('root')
 );
