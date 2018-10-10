@@ -1,0 +1,59 @@
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.pWhite {
+  color:white;
+}
+
+.ulborder {
+  border: 1px solid black;
+  background-color:white;
+}
+
+.ulborder:empty {
+  border: none;
+}
+
+.ulborder li {
+  margin: 5px;
+}
+
+.menutypes {
+  margin:0px;
+}
+
+.largebtn {
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  padding:.5rem 1rem;
+  font-size:1.25rem;
+  line-height:1.5;
+  border-radius:.3rem;
+  cursor: pointer;
+}
+
+.largebtn:hover {
+    background-color: #4CAF50; /* Green */
+}
+
+.shadowbtn:hover {
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.24), 0 4px 4px 0 rgba(0,0,0,0.19);
+}
+
+.backgroundImgSource {
+  bottom:0px;
+  position: fixed;
+  font-size:10px;
+}
+
+.loadingMenu {
+  text-align: center;
+  display: block;
+  margin: auto;
+}
+
+.loadingText {
+  font-size: 40px;
+}
