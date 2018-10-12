@@ -28,37 +28,56 @@ export default class Menu extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  fetchMenuData(apiURL) {
-    this.setState( { loadingMenu : true } )
-    axios.get(apiURL)
-      .then(res => {
-    /* Set initial state with server data */
-        const menuData = res.data
-        this.setState({ menu: menuData },
-            ()=>{console.log()}
-        );
+  resetComponentState(menuData) {
+    const types = {}
 
-        const types = {}
+    Object.keys(menuData).forEach(function(menuType) {
+      types[menuType] = false
+    });
 
-        //using forEach instead of key => {} prevents return warning
-        Object.keys(menuData).forEach(function(menuType) {
-          types[menuType] = false
-        });
+    this.setState( { menuTypes : types  } )
 
-        this.setState( { menuTypes : types  },
-            ()=>{ console.log() }
-        );
+    this.setState( { randomOrders : {} })
 
-        this.setState( { loadingMenu : false } )
-
-        this.setState( { randomOrders : {} })
-
-      }).catch(function(error) {
-        console.log(error);
-      });
+    this.setState( { loadingMenu : false } )
   }
 
-  // Fetch server data in the componentDidMount lifecycle method, method executed only once
+  /*
+    we use this.props.match.params.restaurant in fetchMenuData() because sometimes calling
+    this.setState( { company : this.props.match.params.restaurant} ) within the componentDidUpdate()
+    doesn't update quickly enough to reflect the new values in order to fetch the menu data
+    test by using console.log("STATE : " + this.state.company + " | PROP : " + this.props.match.params.restaurant)
+  */
+  fetchMenuData(apiURL) {
+    this.setState( { loadingMenu : true } )
+    if (localStorage.getItem(this.props.match.params.restaurant)) {
+      const menuData = JSON.parse(localStorage.getItem(this.props.match.params.restaurant))
+      this.setState( { menu: menuData } )
+      this.resetComponentState(menuData)
+    }
+    else {
+      axios.get(apiURL)
+        .then(res => {
+          /* Set initial state with server data */
+          const menuData = res.data
+          this.setState( { menu: menuData } )
+
+          localStorage.setItem(this.props.match.params.restaurant, JSON.stringify(menuData))
+
+          this.resetComponentState(menuData)
+
+        }).catch(function(error) {
+          console.log(error);
+        });
+    }
+
+  }
+
+  /*
+     Fetch server data in the componentDidMount lifecycle method, method executed only once.
+     Reason we use this.state.company once throughout the component is because when the component
+     is first mounted, the initial state is set by the prop given by the router url (/:restaurant)
+  */
     componentDidMount() {
       document.title = "Random Order Generator";
       var apiURL = ""
@@ -73,7 +92,10 @@ export default class Menu extends React.Component {
       this.fetchMenuData(apiURL)
     }
 
-    //used to update this menu component when props change from clicking a different restaurant route
+    /*
+      used to update this menu component when props change from clicking a different restaurant route
+      compare current prop to the new prop when routing and retrieve new menu data
+    */
     componentDidUpdate(prevProps) {
       // Typical usage (don't forget to compare props):
       if (this.props.match.params.restaurant !== prevProps.match.params.restaurant) {
