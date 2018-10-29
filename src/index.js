@@ -8,7 +8,8 @@ import {
   Route,
   Switch
 } from 'react-router-dom'
-
+//:restaurant passings a prop to the Menu component
+//accessed via this.props.match.params.restaurant
 ReactDOM.render(
   <Router>
     <Switch>

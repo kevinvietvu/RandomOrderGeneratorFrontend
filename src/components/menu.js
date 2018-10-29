@@ -25,7 +25,9 @@ export default class Menu extends React.Component {
         devFlag : false,
       };
 
-    this.handleChange = this.handleChange.bind(this);
+    //bind functions so they can be called within onChange html elements
+    this.handleAmountChange = this.handleAmountChange.bind(this);
+    this.handleStateNameChange = this.handleStateNameChange.bind(this);
   }
 
   resetComponentState(menuData) {
@@ -50,8 +52,9 @@ export default class Menu extends React.Component {
   */
   fetchMenuData(apiURL) {
     this.setState( { loadingMenu : true } )
-    if (localStorage.getItem(this.props.match.params.restaurant)) {
-      const menuData = JSON.parse(localStorage.getItem(this.props.match.params.restaurant))
+    const localStorageKey = this.props.match.params.restaurant + this.state.stateName
+    if (localStorage.getItem(localStorageKey)) {
+      const menuData = JSON.parse(localStorage.getItem(localStorageKey))
       this.setState( { menu: menuData } )
       this.resetComponentState(menuData)
     }
@@ -61,8 +64,7 @@ export default class Menu extends React.Component {
           /* Set initial state with server data */
           const menuData = res.data
           this.setState( { menu: menuData } )
-
-          localStorage.setItem(this.props.match.params.restaurant, JSON.stringify(menuData))
+          localStorage.setItem(localStorageKey, JSON.stringify(menuData))
 
           this.resetComponentState(menuData)
 
@@ -70,7 +72,6 @@ export default class Menu extends React.Component {
           console.log(error);
         });
     }
-
   }
 
   /*
@@ -96,9 +97,10 @@ export default class Menu extends React.Component {
       used to update this menu component when props change from clicking a different restaurant route
       compare current prop to the new prop when routing and retrieve new menu data
     */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
       // Typical usage (don't forget to compare props):
-      if (this.props.match.params.restaurant !== prevProps.match.params.restaurant) {
+      //|| (this.state.stateName !== prevState.stateName)
+      if ( (this.props.match.params.restaurant !== prevProps.match.params.restaurant) || (this.state.stateName !== prevState.stateName) ) {
         this.setState( { company : this.props.match.params.restaurant } )
         var apiURL = ""
         if (this.state.devFlag === true) {
@@ -111,6 +113,20 @@ export default class Menu extends React.Component {
         }
         this.fetchMenuData(apiURL)
       }
+
+
+    }
+
+    handleAmountChange(event) {
+      //pattern="[0-9]+([\.][0-9]+)?" regex for decimal numbers, if I ever want to implement another text input for change
+      if (event.target.value === "" || (!isNaN(event.target.value) && parseInt(event.target.value,10) <= 1000))
+        this.setState({amount: event.target.value});
+      else
+        alert("Input must be a number and under $1000")
+    }
+
+    handleStateNameChange(event) {
+      this.setState({stateName: event.target.value});
     }
 
     displayMenuTypes() {
@@ -191,7 +207,7 @@ export default class Menu extends React.Component {
         url: apiURL,
         data: {
           'company': this.state.company,
-          'state':'CA',
+          'state': this.state.stateName,
           'amount' : amountGiven
         },
         headers: {
@@ -226,14 +242,6 @@ export default class Menu extends React.Component {
     this.setState( { menuTypes : types } )
   }
 
-  handleChange(event) {
-    //pattern="[0-9]+([\.][0-9]+)?" regex for decimal numbers, if I ever want to implement another text input for change
-    if (event.target.value === "" || (!isNaN(event.target.value) && parseInt(event.target.value,10) <= 1000))
-      this.setState({amount: event.target.value});
-    else
-      alert("Input must be a number and under $1000")
-  }
-
   render() {
     const header = this.state.company + ", " + this.state.stateName
 
@@ -250,12 +258,67 @@ export default class Menu extends React.Component {
           { this.state.loadingMenu ? this.loadingScreen() :
             <div className="container">
               <h1> <p className="pWhite"> {header} </p> </h1>
+              <label> <p className="pWhite"> View Estimated Prices Within Your State </p>
+              <select value={this.state.stateName} className="stateDropdown" onChange={this.handleStateNameChange}>
+              	<option value="AL">Alabama</option>
+              	<option value="AK">Alaska</option>
+              	<option value="AZ">Arizona</option>
+              	<option value="AR">Arkansas</option>
+              	<option value="CA">California</option>
+              	<option value="CO">Colorado</option>
+              	<option value="CT">Connecticut</option>
+              	<option value="DE">Delaware</option>
+              	<option value="DC">District Of Columbia</option>
+              	<option value="FL">Florida</option>
+              	<option value="GA">Georgia</option>
+              	<option value="HI">Hawaii</option>
+              	<option value="ID">Idaho</option>
+              	<option value="IL">Illinois</option>
+              	<option value="IN">Indiana</option>
+              	<option value="IA">Iowa</option>
+              	<option value="KS">Kansas</option>
+              	<option value="KY">Kentucky</option>
+              	<option value="LA">Louisiana</option>
+              	<option value="ME">Maine</option>
+              	<option value="MD">Maryland</option>
+              	<option value="MA">Massachusetts</option>
+              	<option value="MI">Michigan</option>
+              	<option value="MN">Minnesota</option>
+              	<option value="MS">Mississippi</option>
+              	<option value="MO">Missouri</option>
+              	<option value="MT">Montana</option>
+              	<option value="NE">Nebraska</option>
+              	<option value="NV">Nevada</option>
+              	<option value="NH">New Hampshire</option>
+              	<option value="NJ">New Jersey</option>
+              	<option value="NM">New Mexico</option>
+              	<option value="NY">New York</option>
+              	<option value="NC">North Carolina</option>
+              	<option value="ND">North Dakota</option>
+              	<option value="OH">Ohio</option>
+              	<option value="OK">Oklahoma</option>
+              	<option value="OR">Oregon</option>
+              	<option value="PA">Pennsylvania</option>
+              	<option value="RI">Rhode Island</option>
+              	<option value="SC">South Carolina</option>
+              	<option value="SD">South Dakota</option>
+              	<option value="TN">Tennessee</option>
+              	<option value="TX">Texas</option>
+              	<option value="UT">Utah</option>
+              	<option value="VT">Vermont</option>
+              	<option value="VA">Virginia</option>
+              	<option value="WA">Washington</option>
+              	<option value="WV">West Virginia</option>
+              	<option value="WI">Wisconsin</option>
+              	<option value="WY">Wyoming</option>
+              </select>
+              </label>
               <ul>
                 { this.displayMenuTypes() }
               </ul>
               <label>
                 <p className="pWhite">Money you want to spend</p>
-                <input type="text"  value={this.state.amount} onChange={this.handleChange}/>
+                <input type="text"  value={this.state.amount} onChange={this.handleAmountChange}/>
               </label>
               <button className="btn shadowbtn" onClick={() => this.getRandomOrder(parseFloat(this.state.amount)) }>
                 Generate Random Order
